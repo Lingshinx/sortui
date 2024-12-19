@@ -3,3 +3,4 @@
 .cache/clangd/index/Alias.h.B9CB21D3E874748A.idx
 bin
 build
+compile_commands.json

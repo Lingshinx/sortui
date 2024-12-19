@@ -1,5 +1,6 @@
 #include "Int.h"
 #include <App.h>
+#include <algorithm>
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -44,6 +45,7 @@ void Controller::setData(DataGenerator &source) {
   for (var &it : data) {
     it = source[index++];
   }
+  max = std::ranges::max(data);
 }
 
 void Controller::pause() {
@@ -82,7 +84,7 @@ fn Controller::start_sort() -> std::thread {
       data.merge_sort();
       break;
     }
-    phase = StandBy;
+    phase = Done;
   });
 }
 } // namespace lingshin

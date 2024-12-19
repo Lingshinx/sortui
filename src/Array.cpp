@@ -1,6 +1,5 @@
 #include <Array.h>
 #include <Sort.h>
-#include <iostream>
 namespace lingshin {
 void Array::bubble_sort() {
   for (var index = size() - 1; index > 0; --index)
@@ -10,6 +9,7 @@ void Array::bubble_sort() {
       if (cur > after) cur.swap(after);
     }
 }
+
 void Array::insert_sort() {
   var length = size();
   for (var index = 1; index < length; ++index) {
@@ -18,6 +18,7 @@ void Array::insert_sort() {
     }
   }
 }
+
 void Array::select_sort() {
   for (var index = size() - 1; index > 0; --index) {
     var max = get(0);
@@ -28,5 +29,6 @@ void Array::select_sort() {
 }
 
 void Array::quick_sort() { lingshin::quick_sort(*this, 0, size()); }
+
 void Array::merge_sort() {}
 } // namespace lingshin

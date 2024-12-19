@@ -6,10 +6,12 @@
 #include <condition_variable>
 #include <functional>
 #include <mutex>
+#include <ranges>
 #include <thread>
 #include <unistd.h>
 
 namespace lingshin {
+namespace views = std::ranges::views;
 extern class Controller {
 public:
   Option option;
@@ -20,6 +22,9 @@ public:
 
   void setData(DataGenerator &source);
   void setData(DataGenerator::Unique_ptr source) { setData(*source); };
+
+  fn getDataView() { return views::all(data); }
+
   fn start_sort() -> std::thread;
   fn start_sort(Option option) {
     this->option = option;
@@ -32,6 +37,7 @@ public:
   bool done() { return phase == Phase::Done; }
 
   Status get_state_of(int index);
+  int getMax() { return max; }
 
   use CallBack = std::function<void(int, int)>;
   void forEach(CallBack);
@@ -41,6 +47,7 @@ public:
   static fn getInstance() -> Controller & { return app; };
 
 private:
+  int max;
   std::mutex statusLock;
   std::condition_variable cond_stop;
   static Controller app;
