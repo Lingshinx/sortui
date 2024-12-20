@@ -32,11 +32,11 @@ public:
 };
 
 inline fn Int::operator>=(const Int &other) const {
-  var result = compare(other);
+  let result = compare(other);
   return std::is_gt(result) || std::is_eq(result);
 }
 inline fn Int::operator<=(const Int &other) const {
-  var result = compare(other);
+  let result = compare(other);
   return std::is_lt(result) || std::is_eq(result);
 }
 inline fn Int::operator>(const Int &other) const {

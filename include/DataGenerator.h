@@ -19,6 +19,7 @@ public:
   use Container = std::vector<int>;
   use Unique_ptr = std::unique_ptr<DataGenerator>;
   virtual int operator[](int) = 0;
+  static Unique_ptr Default;
   static Unique_ptr from(Range range, int size = 20);
   static Unique_ptr from(int min, int max, int size = 20) {
     return from(Range{min, max}, size);
@@ -34,7 +35,7 @@ class RandomGenerator : public DataGenerator { // 随机数据生成器
 
 public:
   RandomGenerator(Range range)
-      : dis(range.first, range.second), random(std::random_device{}()){};
+    : dis(range.first, range.second), random(std::random_device{}()){};
   int operator[](int index) override { return dis(random); };
 };
 
@@ -47,9 +48,9 @@ inline DataGenerator::Unique_ptr DataGenerator::from(Range range, int size) {
 struct ArrayGenerator : public DataGenerator { // 数据数据生成器
   const Container data;
   ArrayGenerator(Container &&source)
-      : DataGenerator(source.size()), data(source){};
+    : DataGenerator(source.size()), data(source){};
   ArrayGenerator(Container &source)
-      : DataGenerator(source.size()), data(source){};
+    : DataGenerator(source.size()), data(source){};
   int operator[](int index) override { return data.at(index); }
 };
 

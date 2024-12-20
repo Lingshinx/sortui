@@ -1,3 +1,4 @@
+#pragma once
 #include <Alias.h>
 #include <cstdio>
 #include <ftxui/component/component.hpp>
@@ -10,18 +11,21 @@ extern class UI {
 public:
   static fn getInstance() -> UI & { return _statik; }
   fn loop() { screen.Loop(tabs()); };
+  fn reflush() { screen.Post(ftxui::Event::Custom); }
+
+  static const int Home = 0;
+  static const int View = 1;
+  static const int Set = 2;
+  int tabIndex = Home;
 
 private:
   static UI _statik;
   ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::Fullscreen();
 
-  static const int Home = 0;
-  static const int Set = 1;
-  static const int View = 2;
-  int tabIndex = Home;
   fn tabs() -> ftxui::Component;
   fn homePage() -> ftxui::Component;
   fn viewPage() -> ftxui::Component;
+  fn setPage() -> ftxui::Component;
 
   UI(){};
 } & Tui;

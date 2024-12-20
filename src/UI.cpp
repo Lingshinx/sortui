@@ -14,11 +14,11 @@ UI UI::_statik;
 
 fn UI::tabs() -> Component {
   return Container::Tab(
-      {
-          homePage(),
-          viewPage(),
-      },
-      &tabIndex);
+    {
+      homePage(),
+      viewPage(),
+    },
+    &tabIndex);
 }
 
 } // namespace lingshin

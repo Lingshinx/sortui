@@ -2,7 +2,10 @@
 #include <Array.h>
 #include <DataGenerator.h>
 #include <Option.h>
+#include <UI.h>
 #include <atomic>
+#include <bitset>
+#include <chrono>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
@@ -12,11 +15,12 @@
 
 namespace lingshin {
 namespace views = std::ranges::views;
+namespace time = std::chrono;
 extern class Controller {
 public:
   Option option;
-  enum class Phase { Running, Paused, StandBy, Done };
-  enum Status { Comparing, Swapping, NotActive } status;
+  enum class Phase { StandBy, Ready, Running, Paused, Done };
+  enum Status { Comparing, Swapping, NotActive, Sorted } status;
 
   std::atomic<Phase> phase;
 
@@ -31,12 +35,15 @@ public:
     return start_sort();
   };
 
+  void toggle();
   void wait();
   void pause();
   void resume();
   bool done() { return phase == Phase::Done; }
 
   Status get_state_of(int index);
+  fn timePast() -> time::seconds;
+  fn set_sorted(int index) { isSorted[index] = true; };
   int getMax() { return max; }
 
   use CallBack = std::function<void(int, int)>;
@@ -48,11 +55,14 @@ public:
 
 private:
   int max;
+  use TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+  TimePoint start_time;
   std::mutex statusLock;
   std::condition_variable cond_stop;
   static Controller app;
   Controller() { phase = Phase::StandBy; };
   Array data;
+  std::vector<bool> isSorted;
 } & App;
 
 } // namespace lingshin
