@@ -3,6 +3,7 @@
 #define fn auto
 #define let const auto
 #define use using
-#include <format>
-#include <iostream>
+#define module namespace
 #include <string>
+use String = std::string;
+module range = std::ranges;

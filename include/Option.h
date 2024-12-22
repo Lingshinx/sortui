@@ -8,6 +8,7 @@ struct Option {
     Select,
     Quick,
     Merge,
+    Count, // 用于计数
   } method = Method::Quick;
 };
 } // namespace lingshin

@@ -1,5 +1,6 @@
-#include "Int.h"
 #include <App.h>
+#include <Int.h>
+#include <Tools.h>
 #include <algorithm>
 #include <chrono>
 #include <mutex>
@@ -14,6 +15,18 @@ using namespace std::chrono_literals;
 
 static bool in(Pair pair, int index) {
   return index == pair.first || index == pair.second;
+}
+
+void Controller::initData() {
+  var &source = *data_generator;
+  var index = 0;
+  data.resize(source.size);
+  isSorted.resize(source.size);
+  for (var &it : data)
+    it = source[index++];
+  std::fill(isSorted.begin(), isSorted.end(), false);
+  max = range::max(data);
+  phase = Phase::Ready;
 }
 
 Controller::Status Controller::get_state_of(int index) {
@@ -32,37 +45,42 @@ void Controller::forEach(CallBack callback) {
 }
 
 fn Controller::timePast() -> time::seconds {
-  let now = time::steady_clock::now();
-  return std::chrono::duration_cast<time::seconds>(now - start_time);
+  if (phase == Phase::Ready) return {0s};
+  let now = phase == Phase::Done ? end_time : time::steady_clock::now();
+  return tool::cast<time::seconds>(now - start_time);
 }
 
 void Controller::wait() {
   use enum Phase;
   var lock = std::unique_lock<std::mutex>{statusLock};
   if (phase == Paused) cond_stop.wait(lock, [&] { return phase != Paused; });
-  let duration = 100ms / option.speed;
+  if (option.speed < 0.01) {
+    phase = Paused;
+  } else {
+    let duration = 100ms / option.speed;
+    std::this_thread::sleep_for(duration);
+  }
   Tui.reflush();
-  std::this_thread::sleep_for(duration);
 }
 
-void Controller::setData(DataGenerator &source) {
-  var index = 0;
-  if (source.size == 0) return;
-  phase = Controller::Phase::Ready;
-  data.resize(source.size);
-  isSorted.resize(source.size);
-  for (var &it : data) {
-    it = source[index++];
-  }
-  max = std::ranges::max(data);
+void Controller::setData(DataGenerator::Unique_ptr source) {
+  if (source->size == 0) return;
+  data_generator = std::move(source);
+  if (isIdle()) initData();
 }
 
 void Controller::toggle() {
   use enum Phase;
-  if (phase == Ready) start_sort().detach();
-  if (phase == Paused) resume();
-  if (phase == Running) pause();
+  if (phase == Ready)
+    start_sort().detach();
+  else if (phase == Paused)
+    resume();
+  else if (phase == Running)
+    pause();
+  else if (phase == Done)
+    initData();
 }
+
 void Controller::pause() {
   use enum Phase;
   if (phase == Running) phase = Paused;
@@ -90,13 +108,16 @@ fn Controller::start_sort() -> std::thread {
     case Merge: data.merge_sort(); break;
     }
 
-    phase = Done;
+    done();
+
     forEach([&](int index, int) {
       if (get_state_of(index) != Status::Sorted) {
         set_sorted(index);
         wait();
       }
     });
+
+    end_time = time::steady_clock::now();
     Tui.reflush();
   });
 }

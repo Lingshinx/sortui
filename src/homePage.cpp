@@ -1,11 +1,14 @@
-#include "DataGenerator.h"
 #include <App.h>
+#include <DataGenerator.h>
+#include <HomePage.h>
 #include <UI.h>
 #include <ftxui/component/component.hpp>
+#include <ftxui/component/component_base.hpp>
+#include <ftxui/dom/node.hpp>
 namespace lingshin {
 use namespace ftxui;
 
-fn logo() -> Element {
+fn HomePage::logo() -> Element {
   return vbox({
     text("                                            ▄▄  "),
     text(" ▄█████▄█                  ██╗              ██╗ "),
@@ -19,21 +22,24 @@ fn logo() -> Element {
   });
 }
 
-static let mySign = hbox({
-                      text("Sortui 可视化排序") | color(Color::Blue),
-                      text(" ———— "),
-                      text(" lingshin") | color(Color::Pink1),
-                    }) |
-                    center;
+const Element HomePage::mySign =
+  hbox({
+    text("Sortui 可视化排序") | color(Color::Blue),
+    text(" ———— "),
+    text(" lingshin") | color(Color::Pink1),
+  }) |
+  center;
 
-static let style = ButtonOption{.transform = [](const EntryState &s) {
-  let decorator = s.focused ? bold | color(Color::Cyan) : nothing;
-  return text(s.label) | decorator;
-}};
+fn HomePage::buttonStyle() {
+  return ButtonOption{.transform = [](const EntryState &s) {
+    let decorator = s.focused ? bold | color(Color::Cyan) : nothing;
+    return text(s.label) | decorator;
+  }};
+}
 
-fn HotButton(
-  const std::string &label, Closure onclick, const std::string &hotkey) {
-  let button = Button(label, onclick, style);
+fn HomePage::HotButton(
+  const String &label, Closure onclick, const String &hotkey) -> Component {
+  let button = Button(label, onclick, buttonStyle());
   return Renderer(button, [=] {
     return hbox({
       button->Render(),
@@ -43,14 +49,14 @@ fn HotButton(
   }) | flex;
 }
 
-fn UI::homePage() -> Component {
+HomePage::HomePage() {
   use enum Controller::Phase;
   let onstart = [&] {
-    if (App.phase == StandBy) App.setData(DataGenerator::from(0, 99));
-    tabIndex = View;
+    if (App.phase == StandBy) App.setData(DataGenerator::from(0, 99, 30));
+    Tui.tabIndex = UI::View;
   };
-  let onconfig = [&] { tabIndex = Set; };
-  let onquit = [&] { screen.Exit(); };
+  let onconfig = [&] { Tui.tabIndex = UI::Set; };
+  let onquit = [&] { Tui.close(); };
 
   let start = HotButton("  Start", onstart, "S");
   let config = HotButton("  Config", onconfig, "C");
@@ -62,7 +68,7 @@ fn UI::homePage() -> Component {
     quit,
   });
 
-  return Renderer(layout, [=] {
+  self = Renderer(layout, [=, this] {
     return vbox({
              separatorEmpty(),
              logo() | color(Color::Blue),

@@ -1,6 +1,3 @@
-#include "App.h"
-#include "DataGenerator.h"
-#include "ftxui/dom/elements.hpp"
 #include <UI.h>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/component_base.hpp>
@@ -15,8 +12,9 @@ UI UI::_statik;
 fn UI::tabs() -> Component {
   return Container::Tab(
     {
-      homePage(),
-      viewPage(),
+      homepage.self,
+      viewpage.self,
+      setpage.self,
     },
     &tabIndex);
 }

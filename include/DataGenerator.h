@@ -6,15 +6,19 @@
 #include <random>
 #include <utility>
 #include <vector>
-namespace lingshin {
+module lingshin {
 class DataGenerator {
 protected:
   DataGenerator(int size = 20) : size(size){};
 
+  use Pair = std::pair<int, int>;
+
 public:
   int size = 0;
   virtual ~DataGenerator() = default;
-  use Range = std::pair<int, int>;
+  struct Range : public Pair {
+    Range(int a, int b) : Pair(std::min(a, b), std::max(a, b)) {}
+  };
   use Function = std::function<int(int)>;
   use Container = std::vector<int>;
   use Unique_ptr = std::unique_ptr<DataGenerator>;
@@ -72,4 +76,4 @@ inline DataGenerator::Unique_ptr DataGenerator::from(Function fun, int size) {
   result->size = size;
   return result;
 };
-} // namespace lingshin
+} // module lingshin

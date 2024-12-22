@@ -4,7 +4,7 @@
 #include <optional>
 #include <utility>
 
-namespace lingshin {
+module lingshin {
 using Pair = std::pair<int, int>;
 using Maybe = std::optional<Pair>;
 class Int {
@@ -48,4 +48,4 @@ inline fn Int::operator<(const Int &other) const {
 inline fn Int::operator==(const Int &other) const {
   return is_eq(compare(other));
 }
-} // namespace lingshin
+} // module lingshin

@@ -1,7 +1,7 @@
 #pragma once
 #include <Array.h>
 
-namespace lingshin {
+module lingshin {
 void merge_sort();
 void quick_sort(Array &data, int from, int to);
-} // namespace lingshin
+} // module lingshin

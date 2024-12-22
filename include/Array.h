@@ -1,7 +1,7 @@
 #pragma once
 #include <Int.h>
 #include <vector>
-namespace lingshin {
+module lingshin {
 class Array : public std::vector<int> {
 public:
   Int operator[](int index) { return Int{index, at(index)}; }
@@ -12,4 +12,4 @@ public:
   void quick_sort();
   void merge_sort();
 };
-} // namespace lingshin
+} // module lingshin
