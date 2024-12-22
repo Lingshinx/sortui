@@ -6,7 +6,6 @@
 #include <ranges>
 
 namespace lingshin {
-namespace views = std::ranges::views;
 namespace time = std::chrono;
 extern class Controller {
 public:
@@ -17,7 +16,7 @@ public:
 
   void setData(DataGenerator::Unique_ptr source);
 
-  fn getDataView() { return views::all(data); }
+  fn getDataView() { return view::all(data); }
 
   fn start_sort() -> std::thread;
   fn start_sort(Option option) {

@@ -1,6 +1,8 @@
 #include "App.h"
 #include <Array.h>
 #include <Sort.h>
+#include <ranges>
+
 namespace lingshin {
 //---冒泡排序----------
 void Array::bubble_sort() {
@@ -99,12 +101,52 @@ void merge_sort(Array &data, int from, int to) {
 void Array::merge_sort() { lingshin::merge_sort(*this, 0, size()); }
 
 // ---堆排序--------------------
-void adjust(Array &data, int index) {
-  let size = data.size();
-  if (index * 2 > size) {
+struct node {
+  int index;
+  node(int x) : index(x){};
+  operator int() { return index; }
+  fn left() const { return 2 * index + 1; }
+  fn right() const { return 2 * index + 2; }
+};
+
+void adjust(Array &data, int index, int last) {
+  let end_node = last - 1;
+  let current = node(index);
+  let left = current.left();
+  let right = current.right();
+  let cur = current.index;
+  if (current.left() == end_node) { // 只有子节点的情况
+    if (data[cur] < data[left]) data[cur].swap(data[left]);
+  } else if (right <= end_node) { // 子女双全的情况
+    let leftBigger = data[left] > data[cur];
+    let rightBigger = data[right] > data[cur];
+    var which = 0;
+    if (leftBigger && rightBigger) {
+      which = data[left] > data[right] ? left : right;
+    } else if (leftBigger) {
+      which = left;
+    } else if (rightBigger) {
+      which = right;
+    } else {
+      return;
+    }
+    data[cur].swap(data[which]);
+    adjust(data, which, last);
   }
 }
 
-void Array::heap_sort() {};
+void Array::heap_sort() {
+  use namespace view;
+  int lastIndex = size() - 1;
+  int last_unadjusted = (lastIndex) / 2;
+  var &data = *this;
+  for (let index : iota(0, last_unadjusted) | reverse) // 建堆
+    adjust(data, index, lastIndex);
+  for (let last : iota(0, lastIndex + 1) | reverse) { // 排序
+    get(0).swap(get(last));
+    App.set_sorted(last);
+    adjust(data, 0, last);
+  }
+};
 //
 } // namespace lingshin
