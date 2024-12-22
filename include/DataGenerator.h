@@ -1,12 +1,10 @@
 #pragma once
 #include <Int.h>
-#include <cstdlib>
 #include <functional>
 #include <memory>
 #include <random>
-#include <utility>
-#include <vector>
-module lingshin {
+
+namespace lingshin {
 class DataGenerator {
 protected:
   DataGenerator(int size = 20) : size(size){};
@@ -76,4 +74,4 @@ inline DataGenerator::Unique_ptr DataGenerator::from(Function fun, int size) {
   result->size = size;
   return result;
 };
-} // module lingshin
+} // namespace lingshin

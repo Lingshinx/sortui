@@ -9,7 +9,7 @@
 #include <ftxui/component/component_options.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/component/task.hpp>
-module lingshin {
+namespace lingshin {
   extern class UI {
   public:
     static fn getInstance() -> UI & { return _statik; }
@@ -33,4 +33,4 @@ module lingshin {
     UI(){};
   } & Tui;
 
-} // module lingshin
+} // namespace lingshin

@@ -4,9 +4,9 @@
 #include <optional>
 #include <utility>
 
-module lingshin {
-using Pair = std::pair<int, int>;
-using Maybe = std::optional<Pair>;
+namespace lingshin {
+use Pair = std::pair<int, int>;
+use Maybe = std::optional<Pair>;
 class Int {
   int index;
   int *it;
@@ -19,6 +19,8 @@ public:
     Maybe nowSwaping = std::nullopt;
   } record;
 
+  Int(int index, int &x) : index(index), it(&x){};
+
   fn compare(const Int &other) const -> std::strong_ordering;
   fn swap(const Int &other) -> void;
   fn operator>=(const Int &other) const;
@@ -28,7 +30,7 @@ public:
   fn operator==(const Int &other) const;
   fn value() -> int & { return *it; }
   fn value() const -> const int & { return *it; }
-  Int(int index, int &x) : index(index), it(&x){};
+  operator int() { return *it; }
 };
 
 inline fn Int::operator>=(const Int &other) const {
@@ -48,4 +50,4 @@ inline fn Int::operator<(const Int &other) const {
 inline fn Int::operator==(const Int &other) const {
   return is_eq(compare(other));
 }
-} // module lingshin
+} // namespace lingshin

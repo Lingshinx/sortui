@@ -1,20 +1,13 @@
 #pragma once
 #include <Array.h>
 #include <DataGenerator.h>
-#include <Option.h>
 #include <UI.h>
-#include <atomic>
-#include <chrono>
-#include <condition_variable>
-#include <functional>
 #include <mutex>
 #include <ranges>
-#include <thread>
-#include <unistd.h>
 
-module lingshin {
-module views = std::ranges::views;
-module time = std::chrono;
+namespace lingshin {
+namespace views = std::ranges::views;
+namespace time = std::chrono;
 extern class Controller {
 public:
   Option option;
@@ -70,4 +63,4 @@ private:
   void done() { phase = Phase::Done; };
 } & App;
 
-} // module lingshin
+} // namespace lingshin

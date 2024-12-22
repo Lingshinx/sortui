@@ -1,4 +1,7 @@
 #pragma once
+#include <Alias.h>
+#include <map>
+
 namespace lingshin {
 struct Option {
   float speed = 1;
@@ -8,7 +11,10 @@ struct Option {
     Select,
     Quick,
     Merge,
+    Heap,
     Count, // 用于计数
   } method = Method::Quick;
+  use Map = std::map<Method, String>;
+  static Map map;
 };
 } // namespace lingshin

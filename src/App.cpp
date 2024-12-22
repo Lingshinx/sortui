@@ -1,17 +1,18 @@
+#include "Option.h"
 #include <App.h>
 #include <Int.h>
 #include <Tools.h>
 #include <algorithm>
 #include <chrono>
+#include <exception>
 #include <mutex>
 #include <thread>
 
 namespace lingshin {
-Controller &App = Controller::getInstance();
+use namespace std::chrono_literals;
 
 Controller Controller::app;
-
-using namespace std::chrono_literals;
+Controller &App = Controller::getInstance();
 
 static bool in(Pair pair, int index) {
   return index == pair.first || index == pair.second;
@@ -24,6 +25,7 @@ void Controller::initData() {
   isSorted.resize(source.size);
   for (var &it : data)
     it = source[index++];
+
   std::fill(isSorted.begin(), isSorted.end(), false);
   max = range::max(data);
   phase = Phase::Ready;
@@ -39,13 +41,12 @@ Controller::Status Controller::get_state_of(int index) {
 };
 
 void Controller::forEach(CallBack callback) {
-  for (int index = 0; index < data.size(); ++index) {
+  for (int index = 0; index < data.size(); ++index) 
     callback(index, data.at(index));
-  }
 }
 
 fn Controller::timePast() -> time::seconds {
-  if (phase == Phase::Ready) return {0s};
+  if (phase == Phase::Ready) return 0s;
   let now = phase == Phase::Done ? end_time : time::steady_clock::now();
   return tool::cast<time::seconds>(now - start_time);
 }
@@ -53,13 +54,11 @@ fn Controller::timePast() -> time::seconds {
 void Controller::wait() {
   use enum Phase;
   var lock = std::unique_lock<std::mutex>{statusLock};
-  if (phase == Paused) cond_stop.wait(lock, [&] { return phase != Paused; });
-  if (option.speed < 0.01) {
+  if (option.speed < 0.01) 
     phase = Paused;
-  } else {
-    let duration = 100ms / option.speed;
-    std::this_thread::sleep_for(duration);
-  }
+  if (phase == Paused) cond_stop.wait(lock, [&] { return phase != Paused; });
+  let duration = 100ms / option.speed;
+  std::this_thread::sleep_for(duration);
   Tui.reflush();
 }
 
@@ -71,14 +70,13 @@ void Controller::setData(DataGenerator::Unique_ptr source) {
 
 void Controller::toggle() {
   use enum Phase;
-  if (phase == Ready)
-    start_sort().detach();
-  else if (phase == Paused)
-    resume();
-  else if (phase == Running)
-    pause();
-  else if (phase == Done)
-    initData();
+  switch (phase) {
+  case Ready:start_sort().detach();break;
+  case Running:pause();break;
+  case Paused:resume();break;
+  case Done:initData();break;
+  default:break;
+  }
 }
 
 void Controller::pause() {
@@ -93,24 +91,37 @@ void Controller::resume() {
   cond_stop.notify_all();
 }
 
+use enum Option::Method;
+Option::Map Option::map{
+  {Bubble, "冒泡排序"},
+  {Insert, "插入排序"},
+  {Select, "选择排序"},
+  {Quick,  "快速排序"},
+  {Merge,  "归并排序"},
+  {Heap,   "堆排序"},
+};
+
 fn Controller::start_sort() -> std::thread {
   use enum Option::Method;
   use enum Phase;
-  if (phase != Ready) return {};
-  phase = Running;
+  if (phase != Ready) throw std::exception{};
+
   start_time = time::steady_clock::now();
   return std::thread([&] {
+    phase = Running;
     switch (option.method) {
     case Bubble: data.bubble_sort(); break;
     case Insert: data.insert_sort(); break;
     case Select: data.select_sort(); break;
     case Quick: data.quick_sort(); break;
     case Merge: data.merge_sort(); break;
+    case Heap: data.heap_sort(); break;
+    case Count: break;
     }
 
     done();
 
-    forEach([&](int index, int) {
+    forEach([&](int index, int _) {
       if (get_state_of(index) != Status::Sorted) {
         set_sorted(index);
         wait();

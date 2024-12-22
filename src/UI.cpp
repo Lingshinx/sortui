@@ -1,8 +1,4 @@
 #include <UI.h>
-#include <ftxui/component/component.hpp>
-#include <ftxui/component/component_base.hpp>
-#include <ftxui/component/component_options.hpp>
-#include <ftxui/component/task.hpp>
 
 namespace lingshin {
 use namespace ftxui;
@@ -16,7 +12,8 @@ fn UI::tabs() -> Component {
       viewpage.self,
       setpage.self,
     },
-    &tabIndex);
+    &tabIndex
+  );
 }
 
 } // namespace lingshin
