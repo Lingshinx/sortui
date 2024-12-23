@@ -1,5 +1,3 @@
-#include "DataGenerator.h"
-#include "Option.h"
 #include <App.h>
 #include <UI.h>
 

@@ -15,5 +15,6 @@ public:
   void quick_sort();
   void merge_sort();
   void heap_sort();
+  void shell_sort();
 };
 } // namespace lingshin

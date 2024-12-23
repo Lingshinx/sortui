@@ -103,6 +103,7 @@ fn SortView::InfoPanel::constructor(
       separatorEmpty(),
       info(" 交换次数:", swapTimes, Color::Blue),
       info(" 比较次数:", compareTimes, Color::Yellow),
+      info(" 空间使用:", size, Color::Green),
       info("󰉻 数据长度:", size, Color::Magenta),
       separatorEmpty(),
       info(" 耗时:", tool::formatDuration(App.timePast()), Color::Red),
@@ -209,7 +210,11 @@ SortView::SortView() {
     make_key("减速",      "<"),
     make_key("Quit",      "q"),
     make_key("切换方法",  "Tab"),
-  });
+  }) | size(
+      WidthOrHeight::HEIGHT,
+      Constraint::GREATER_THAN,
+      2
+  );
 
   self = Renderer(controlPanel, [=] {
     return vbox({

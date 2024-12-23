@@ -9,7 +9,7 @@
 #include <thread>
 
 namespace lingshin {
-use namespace std::chrono_literals;
+using namespace std::chrono_literals;
 
 Controller Controller::app;
 Controller &App = Controller::getInstance();
@@ -41,7 +41,7 @@ Controller::Status Controller::get_state_of(int index) {
 };
 
 void Controller::forEach(CallBack callback) {
-  for (int index = 0; index < data.size(); ++index) 
+  for (int index = 0; index < data.size(); ++index)
     callback(index, data.at(index));
 }
 
@@ -54,8 +54,7 @@ fn Controller::timePast() -> time::seconds {
 void Controller::wait() {
   use enum Phase;
   var lock = std::unique_lock<std::mutex>{statusLock};
-  if (option.speed < 0.01) 
-    phase = Paused;
+  if (option.speed < 0.01) phase = Paused;
   if (phase == Paused) cond_stop.wait(lock, [&] { return phase != Paused; });
   let duration = 100ms / option.speed;
   std::this_thread::sleep_for(duration);
@@ -71,11 +70,11 @@ void Controller::setData(DataGenerator::Unique_ptr source) {
 void Controller::toggle() {
   use enum Phase;
   switch (phase) {
-  case Ready:start_sort().detach();break;
-  case Running:pause();break;
-  case Paused:resume();break;
-  case Done:initData();break;
-  default:break;
+  case Ready: start_sort().detach(); break;
+  case Running: pause(); break;
+  case Paused: resume(); break;
+  case Done: initData(); break;
+  default: break;
   }
 }
 
@@ -96,9 +95,10 @@ Option::Map Option::map{
   {Bubble, "冒泡排序"},
   {Insert, "插入排序"},
   {Select, "选择排序"},
-  {Quick,  "快速排序"},
-  {Merge,  "归并排序"},
-  {Heap,   "堆排序"},
+  {Quick, "快速排序"},
+  {Merge, "归并排序"},
+  {Heap, "堆排序"},
+  {Shell, "希儿排序"},
 };
 
 fn Controller::start_sort() -> std::thread {
@@ -107,6 +107,7 @@ fn Controller::start_sort() -> std::thread {
   if (phase != Ready) throw std::exception{};
 
   start_time = time::steady_clock::now();
+  resetRecord();
   return std::thread([&] {
     phase = Running;
     switch (option.method) {
@@ -116,6 +117,7 @@ fn Controller::start_sort() -> std::thread {
     case Quick: data.quick_sort(); break;
     case Merge: data.merge_sort(); break;
     case Heap: data.heap_sort(); break;
+    case Shell: data.shell_sort(); break;
     case Count: break;
     }
 

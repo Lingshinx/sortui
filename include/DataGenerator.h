@@ -22,13 +22,13 @@ public:
   use Unique_ptr = std::unique_ptr<DataGenerator>;
   virtual int operator[](int) = 0;
   static Unique_ptr Default;
-  static Unique_ptr from(Range range, int size = 20);
-  static Unique_ptr from(int min, int max, int size = 20) {
+  static fn from(Range range, int size = 20) -> Unique_ptr;
+  static fn from(int min, int max, int size = 20) -> Unique_ptr {
     return from(Range{min, max}, size);
   };
-  static Unique_ptr from(Function fun, int size = 20);
-  static Unique_ptr from(Container &&source);
-  static Unique_ptr from(Container &source);
+  static fn from(Function fun, int size = 20) -> Unique_ptr;
+  static fn from(Container &&source) -> Unique_ptr;
+  static fn from(Container &source) -> Unique_ptr;
 };
 
 class RandomGenerator : public DataGenerator { // 随机数据生成器
@@ -41,7 +41,7 @@ public:
   int operator[](int index) override { return dis(random); };
 };
 
-inline DataGenerator::Unique_ptr DataGenerator::from(Range range, int size) {
+inline fn DataGenerator::from(Range range, int size) -> Unique_ptr {
   var result = std::make_unique<RandomGenerator>(range);
   result->size = size;
   return result;
@@ -56,10 +56,10 @@ struct ArrayGenerator : public DataGenerator { // 数据数据生成器
   int operator[](int index) override { return data.at(index); }
 };
 
-inline DataGenerator::Unique_ptr DataGenerator::from(Container &&source) {
+inline fn DataGenerator::from(Container &&source) -> Unique_ptr {
   return std::make_unique<ArrayGenerator>(std::move(source));
 };
-inline DataGenerator::Unique_ptr DataGenerator::from(Container &source) {
+inline fn DataGenerator::from(Container &source) -> Unique_ptr {
   return std::make_unique<ArrayGenerator>(source);
 }
 
@@ -69,7 +69,7 @@ struct FunctionGenerator : public DataGenerator { // 函数数据生成器
   int operator[](int index) override { return fun(index); }
 };
 
-inline DataGenerator::Unique_ptr DataGenerator::from(Function fun, int size) {
+inline fn DataGenerator::from(Function fun, int size) -> Unique_ptr {
   var result = std::make_unique<FunctionGenerator>(fun);
   result->size = size;
   return result;

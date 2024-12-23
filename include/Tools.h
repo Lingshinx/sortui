@@ -2,8 +2,8 @@
 #include "Alias.h"
 #include <chrono>
 namespace lingshin::tool {
-namespace time = std::chrono;
 
+namespace time = std::chrono;
 fn formatDuration(time::seconds)->std::string;
 
 template <typename T>

@@ -12,6 +12,7 @@ struct Option {
     Quick,
     Merge,
     Heap,
+    Shell,
     Count, // 用于计数
   } method = Method::Quick;
   use Map = std::map<Method, String>;

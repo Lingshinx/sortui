@@ -148,5 +148,31 @@ void Array::heap_sort() {
     adjust(data, 0, last);
   }
 };
-//
+
+// ---希儿排序------------------------------
+void shell_insert_sort(Array &data, int from, int step) {
+  let length = data.size();
+  for (var index = from; index < length; index += step)
+    for (
+      var inner = index;
+      inner >= step && data[inner] < data[inner - step];
+      inner -= step
+    ) data[inner].swap(data[inner - step]);
+}
+
+int maxDigit(int num) {
+  if (num <= 1) return num;
+  return maxDigit(num >> 1) << 1;
+}
+
+void Array::shell_sort() {
+  use namespace view;
+  var length = size();
+  var &data = *this;
+  for (var step = maxDigit(length); step > 0; step >>= 1) 
+    for (let eachGroup : iota(0, step)) 
+      shell_insert_sort(data, eachGroup, step);
+}
+
+// ---基数排序------------------
 } // namespace lingshin

@@ -52,7 +52,7 @@ fn HomePage::HotButton(
 HomePage::HomePage() {
   use enum Controller::Phase;
   let onstart = [&] {
-    if (App.phase == StandBy) App.setData(DataGenerator::from(0, 99, 30));
+    if (App.phase == StandBy) App.setData(DataGenerator::from(0, 99, 34));
     Tui.tabIndex = UI::View;
   };
   let onconfig = [&] { Tui.tabIndex = UI::Set; };

@@ -15,6 +15,7 @@ public:
   static struct Record {
     int cmpTimes = 0;
     int swpTimes = 0;
+    int spaceUesd= 0;
     Maybe nowCmping = std::nullopt;
     Maybe nowSwaping = std::nullopt;
   } record;
