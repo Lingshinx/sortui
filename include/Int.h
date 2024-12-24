@@ -1,5 +1,6 @@
 #pragma once
 #include <Alias.h>
+#include <algorithm>
 #include <compare>
 #include <optional>
 #include <utility>
@@ -15,40 +16,60 @@ public:
   static struct Record {
     int cmpTimes = 0;
     int swpTimes = 0;
-    int spaceUesd= 0;
+    int spaceUsed = 0;
     Maybe nowCmping = std::nullopt;
     Maybe nowSwaping = std::nullopt;
+
+    fn free(int size) { _spaceUsed -= size; };
+    fn usepace(int size) {
+      _spaceUsed += size;
+      spaceUsed = std::max(spaceUsed, _spaceUsed);
+    };
+
+  private:
+    int _spaceUsed = 0;
   } record;
 
   Int(int index, int &x) : index(index), it(&x){};
 
   fn compare(const Int &other) const -> std::strong_ordering;
+  fn compare(int other) const -> std::strong_ordering;
   fn swap(const Int &other) -> void;
-  fn operator>=(const Int &other) const;
-  fn operator<=(const Int &other) const;
-  fn operator>(const Int &other) const;
-  fn operator<(const Int &other) const;
-  fn operator==(const Int &other) const;
+  template <typename Type>
+  fn operator>=(Type other) const;
+  template <typename Type>
+  fn operator<=(Type other) const;
+  template <typename Type>
+  fn operator>(Type other) const;
+  template <typename Type>
+  fn operator<(Type other) const;
+  template <typename Type>
+  fn operator==(Type other) const;
   fn value() -> int & { return *it; }
   fn value() const -> const int & { return *it; }
   operator int() { return *it; }
 };
 
-inline fn Int::operator>=(const Int &other) const {
+template <typename Type>
+inline fn Int::operator>=(Type other) const {
   let result = compare(other);
   return std::is_gt(result) || std::is_eq(result);
 }
-inline fn Int::operator<=(const Int &other) const {
+template <typename Type>
+inline fn Int::operator<=(Type other) const {
   let result = compare(other);
   return std::is_lt(result) || std::is_eq(result);
 }
-inline fn Int::operator>(const Int &other) const {
+template <typename Type>
+inline fn Int::operator>(Type other) const {
   return is_gt(compare(other));
 }
-inline fn Int::operator<(const Int &other) const {
+template <typename Type>
+inline fn Int::operator<(Type other) const {
   return is_lt(compare(other));
 }
-inline fn Int::operator==(const Int &other) const {
+template <typename Type>
+inline fn Int::operator==(Type other) const {
   return is_eq(compare(other));
 }
 } // namespace lingshin

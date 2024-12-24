@@ -45,7 +45,7 @@ fn SortView::viewPanel() -> Element {
                   : (status == Sorted)    ? Color::Green
                                           : Color{};
     let rate = static_cast<float>(value) / max;
-    let length = rate + (rate > 0.5 ? -0.01 : 0.01);
+    let length = rate + (rate > 0.75 ? -0.01 : rate < 0.25 ? 0.01 : 0);
     let bar = gauge(length) | color(textColor);
     let num = text(std::to_string(value)) | bold | color(textColor);
     nums.push_back(num);
@@ -96,6 +96,7 @@ fn SortView::InfoPanel::constructor(
   let &record = App.getRecord();
   let swapTimes = record.swpTimes;
   let compareTimes = record.cmpTimes;
+  let spaceUsed = record.spaceUsed;
   let size = App.getDataView().size();
   let inside =
     vbox({
@@ -103,7 +104,7 @@ fn SortView::InfoPanel::constructor(
       separatorEmpty(),
       info(" 交换次数:", swapTimes, Color::Blue),
       info(" 比较次数:", compareTimes, Color::Yellow),
-      info(" 空间使用:", size, Color::Green),
+      info(" 空间使用:", spaceUsed, Color::Green),
       info("󰉻 数据长度:", size, Color::Magenta),
       separatorEmpty(),
       info(" 耗时:", tool::formatDuration(App.timePast()), Color::Red),

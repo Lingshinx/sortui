@@ -1,6 +1,8 @@
 #include "App.h"
 #include <Array.h>
-#include <Sort.h>
+#include <algorithm>
+#include <iterator>
+#include <list>
 #include <ranges>
 
 namespace lingshin {
@@ -70,8 +72,7 @@ void Array::quick_sort() { lingshin::quick_sort(*this, 0, size()); }
 //----归并排序--------------------------
 void merge(Array &data, int from, int mid, int to) {
   int size = to - from;
-  var temp = Array{};
-  temp.reserve(size);
+  var temp = Array::new_que();
   var a = from, b = mid;
   while (true) {
     if (a >= mid && b >= to) break;
@@ -153,11 +154,9 @@ void Array::heap_sort() {
 void shell_insert_sort(Array &data, int from, int step) {
   let length = data.size();
   for (var index = from; index < length; index += step)
-    for (
-      var inner = index;
-      inner >= step && data[inner] < data[inner - step];
-      inner -= step
-    ) data[inner].swap(data[inner - step]);
+    for (var inner = index; inner >= step && data[inner] < data[inner - step];
+         inner -= step)
+      data[inner].swap(data[inner - step]);
 }
 
 int maxDigit(int num) {
@@ -169,10 +168,56 @@ void Array::shell_sort() {
   use namespace view;
   var length = size();
   var &data = *this;
-  for (var step = maxDigit(length); step > 0; step >>= 1) 
-    for (let eachGroup : iota(0, step)) 
+  for (var step = maxDigit(length); step > 0; step >>= 1)
+    for (let eachGroup : iota(0, step))
       shell_insert_sort(data, eachGroup, step);
 }
 
-// ---基数排序------------------
+// --- 桶排序------------------
+struct Buckets {
+  int max, min, step;
+  struct Bucket : public SpaceRecorder<std::list<int>> {
+    use Base = SpaceRecorder<std::list<int>>;
+    void insert(Int value) {
+      let it = range::find_if(*this, [=](int x) { return value > x; });
+      Base::insert(it, value);
+    }
+  };
+  std::vector<Bucket> buckets;
+  Buckets(int max, int min, int step)
+    : max(max), min(min), step(step), buckets((max - min) / step + 1) {}
+  void push(Int value) {
+    let index = (value - min) / step;
+    buckets[index].insert(value);
+  };
+
+  fn collection() { return view::all(buckets) | view::join; }
+};
+
+void Array::bucket_sort() {
+  var &data = *this;
+  let max = range::max(data);
+  let min = range::min(data);
+  let sqroot = static_cast<int>(sqrt(size()));
+  let step = (max - min) / sqroot;
+  var buckets = Buckets(max, min, step);
+  for (let index : view::iota(0) | view::take(size())) {
+    buckets.push(data[index]);
+    let view = buckets.collection();
+    range::copy(view, data.begin());
+  }
+}
+
+// --- 基数排序 -------------------
+struct Radix {
+  std::array<int, 16> radixes;
+};
+
+void Array::radix_sort() {}
+
+template <typename Type>
+int &SpaceRecorder<Type>::spaceUsed = Int::record.spaceUsed;
+
+template <typename Type>
+Int::Record &SpaceRecorder<Type>::record = Int::record;
 } // namespace lingshin

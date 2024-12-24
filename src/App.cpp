@@ -99,6 +99,8 @@ Option::Map Option::map{
   {Merge, "归并排序"},
   {Heap, "堆排序"},
   {Shell, "希儿排序"},
+  {Bucket, "桶排序"},
+  {Radix, "基数排序"},
 };
 
 fn Controller::start_sort() -> std::thread {
@@ -118,10 +120,13 @@ fn Controller::start_sort() -> std::thread {
     case Merge: data.merge_sort(); break;
     case Heap: data.heap_sort(); break;
     case Shell: data.shell_sort(); break;
+    case Bucket: data.bucket_sort(); break;
+    case Radix: data.radix_sort(); break;
     case Count: break;
     }
 
     done();
+    end_time = time::steady_clock::now();
 
     forEach([&](int index, int _) {
       if (get_state_of(index) != Status::Sorted) {
@@ -129,9 +134,6 @@ fn Controller::start_sort() -> std::thread {
         wait();
       }
     });
-
-    end_time = time::steady_clock::now();
-    Tui.reflush();
   });
 }
 } // namespace lingshin
