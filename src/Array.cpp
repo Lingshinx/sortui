@@ -191,7 +191,7 @@ struct Buckets {
     buckets[index].insert(value);
   };
 
-  fn collection() { return view::all(buckets) | view::join; }
+  fn collection() { return buckets | view::join; }
 };
 
 void Array::bucket_sort() {
@@ -210,10 +210,37 @@ void Array::bucket_sort() {
 
 // --- 基数排序 -------------------
 struct Radix {
-  std::array<int, 16> radixes;
+  int digit = 0;
+  int getDigit() { return digit; };
+  use Container = std::list<int>;
+  std::array<Container, 0x10> radixes;
+  void next_digit() { digit += 4; }
+  int digit_of(int num) { return num >> digit & 0xf; }
+  void push(int num) { radixes[digit_of(num)].push_back(num); }
+  fn view() { return radixes | view::join; };
+  fn collect() {
+    var result = Container{};
+    for (var &each : radixes)
+      result.splice(result.end(), each);
+    return result;
+  };
 };
 
-void Array::radix_sort() {}
+void Array::radix_sort() {
+  var radixes = Radix{};
+  var &data = *this;
+  for (let it : *this)
+    radixes.push(it);
+  let max = range::max(data);
+  for (let max_digit = maxDigit(max); 1 << radixes.getDigit() <= max_digit;
+       radixes.next_digit()) {
+    let collection = radixes.collect();
+    for (let it : collection)
+      radixes.push(it);
+    range::copy(radixes.view(), data.begin());
+    App.wait();
+  }
+}
 
 template <typename Type>
 int &SpaceRecorder<Type>::spaceUsed = Int::record.spaceUsed;
