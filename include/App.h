@@ -1,18 +1,20 @@
 #pragma once
 #include <Array.h>
 #include <DataGenerator.h>
-#include <UI.h>
+#include <UI/UI.h>
 #include <mutex>
 #include <ranges>
 
 namespace lingshin {
 namespace views = range::views;
 namespace time = std::chrono;
+
+// 总控全局的类，用于生成数据，管理数据，获取信息，控制排序流程等
 extern class Controller {
 public:
   Option option;
-  enum Status { Comparing, Swapping, NotActive, Sorted } status;
   enum class Phase { StandBy, Ready, Running, Paused, Done };
+  enum Status { Comparing, Swapping, NotActive, Sorted } status;
   std::atomic<Phase> phase;
 
   // --- 时期控制相关-------------------
@@ -31,7 +33,7 @@ public:
     return phase == StandBy || phase == Ready || phase == Done;
   }
   fn timePast() -> time::seconds;
-  
+
   // --- 数据控制相关------------------------------
   void setData(DataGenerator::Unique_ptr source);
   fn set_sorted(int index) { isSorted[index] = true; };
@@ -43,12 +45,9 @@ public:
   use CallBack = std::function<void(int, int)>;
   void forEach(CallBack);
 
-
   static fn getInstance() -> Controller & { return app; };
 
 private:
-  int max;
-
   use TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
   TimePoint start_time;
   TimePoint end_time;
@@ -58,10 +57,11 @@ private:
   static Controller app;
   Controller() : phase(Phase::StandBy){};
 
+  int max;
   DataGenerator::Unique_ptr data_generator;
   Array data;
   std::vector<bool> isSorted;
-  fn resetRecord(){ Int::record = Int::Record{}; };
+  fn resetRecord() { Int::record = Int::Record{}; };
   void initData();
 
 } & App;

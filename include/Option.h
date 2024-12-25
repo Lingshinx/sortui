@@ -3,6 +3,7 @@
 #include <map>
 
 namespace lingshin {
+// 保存用户选项
 struct Option {
   float speed = 1;
   enum class Method {
@@ -14,7 +15,7 @@ struct Option {
     Heap,
     Shell,
     Bucket,
-    Radix ,
+    Radix,
     Count, // 用于计数
   } method = Method::Quick;
   use Map = std::map<Method, String>;

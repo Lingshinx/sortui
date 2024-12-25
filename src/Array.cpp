@@ -1,7 +1,6 @@
 #include "App.h"
 #include <Array.h>
 #include <algorithm>
-#include <iterator>
 #include <list>
 #include <ranges>
 
@@ -212,7 +211,7 @@ void Array::bucket_sort() {
 struct Radix {
   int digit = 0;
   int getDigit() { return digit; };
-  use Container = std::list<int>;
+  use Container = SpaceRecorder<std::list<int>>;
   std::array<Container, 0x10> radixes;
   void next_digit() { digit += 4; }
   int digit_of(int num) { return num >> digit & 0xf; }

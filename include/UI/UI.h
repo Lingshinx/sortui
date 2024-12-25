@@ -1,8 +1,8 @@
 #pragma once
+#include "HomePage.h"
+#include "SetPage.h"
+#include "SortView.h"
 #include <Alias.h>
-#include <HomePage.h>
-#include <SetPage.h>
-#include <SortView.h>
 #include <ftxui/component/screen_interactive.hpp>
 
 namespace lingshin {

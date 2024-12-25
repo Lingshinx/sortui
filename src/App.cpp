@@ -12,7 +12,7 @@ namespace lingshin {
 using namespace std::chrono_literals;
 
 Controller Controller::app;
-Controller &App = Controller::getInstance();
+Controller &App = Controller::getInstance(); // 全局静态单例变量，思路不错吧
 
 static bool in(Pair pair, int index) {
   return index == pair.first || index == pair.second;
@@ -26,6 +26,7 @@ void Controller::initData() {
   for (var &it : data)
     it = source[index++];
 
+  // 因为vector<bool>其实是类似于bitset的结构, 所以不能用range::fill, 可惜
   std::fill(isSorted.begin(), isSorted.end(), false);
   max = range::max(data);
   phase = Phase::Ready;
@@ -56,6 +57,7 @@ void Controller::wait() {
   var lock = std::unique_lock<std::mutex>{statusLock};
   if (option.speed < 0.01) phase = Paused;
   if (phase == Paused) cond_stop.wait(lock, [&] { return phase != Paused; });
+  // 我觉得这个挺巧妙的，不知道事实上的倍速是不是同原理
   let duration = 100ms / option.speed;
   std::this_thread::sleep_for(duration);
   Tui.reflush();
@@ -127,7 +129,7 @@ fn Controller::start_sort() -> std::thread {
 
     done();
     end_time = time::steady_clock::now();
-
+    // 排完之后画个绿三角，也就是为个好看
     forEach([&](int index, int _) {
       if (get_state_of(index) != Status::Sorted) {
         set_sorted(index);

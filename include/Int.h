@@ -8,6 +8,7 @@
 namespace lingshin {
 use Pair = std::pair<int, int>;
 use Maybe = std::optional<Pair>;
+// 包装int, 用于实时记录比较次数
 class Int {
   int index;
   int *it;
@@ -23,7 +24,7 @@ public:
     fn free(int size) { _spaceUsed -= size; };
     fn usepace(int size) {
       _spaceUsed += size;
-      spaceUsed = std::max(spaceUsed, _spaceUsed);
+      spaceUsed = std::max(spaceUsed, _spaceUsed); // 只记录最大空间占用
     };
 
   private:
@@ -35,7 +36,7 @@ public:
   fn compare(const Int &other) const -> std::strong_ordering;
   fn compare(int other) const -> std::strong_ordering;
   fn swap(const Int &other) -> void;
-  template <typename Type>
+  template <typename Type> // 为什么不能批量地模板化
   fn operator>=(Type other) const;
   template <typename Type>
   fn operator<=(Type other) const;

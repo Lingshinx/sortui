@@ -1,7 +1,7 @@
 #include <App.h>
 #include <DataGenerator.h>
-#include <HomePage.h>
-#include <UI.h>
+#include <UI/HomePage.h>
+#include <UI/UI.h>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/component_base.hpp>
 #include <ftxui/dom/node.hpp>
@@ -52,7 +52,7 @@ fn HomePage::HotButton(
 HomePage::HomePage() {
   use enum Controller::Phase;
   let onstart = [&] {
-    if (App.phase == StandBy) App.setData(DataGenerator::from(0, 99, 34));
+    if (App.phase == StandBy) App.setData(DataGenerator::from(0, 99, 30));
     Tui.tabIndex = UI::View;
   };
   let onconfig = [&] { Tui.tabIndex = UI::Set; };

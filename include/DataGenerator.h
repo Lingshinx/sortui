@@ -1,10 +1,14 @@
 #pragma once
 #include <Int.h>
+#include <fstream>
 #include <functional>
 #include <memory>
 #include <random>
 
 namespace lingshin {
+
+// 用于生成不同类型的数据
+// 统一用同一个接口
 class DataGenerator {
 protected:
   DataGenerator(int size = 20) : size(size){};
@@ -29,6 +33,7 @@ public:
   static fn from(Function fun, int size = 20) -> Unique_ptr;
   static fn from(Container &&source) -> Unique_ptr;
   static fn from(Container &source) -> Unique_ptr;
+  static fn from(String filepath) -> Unique_ptr;
 };
 
 class RandomGenerator : public DataGenerator { // 随机数据生成器
@@ -73,5 +78,19 @@ inline fn DataGenerator::from(Function fun, int size) -> Unique_ptr {
   var result = std::make_unique<FunctionGenerator>(fun);
   result->size = size;
   return result;
+};
+
+struct FileGenerator : public DataGenerator { // 文件数据生成器
+  std::ifstream fin;
+  FileGenerator(String filepath) : fin(filepath){};
+  int operator[](int index) override {
+    var result = 0;
+    fin >> result;
+    return result;
+  }
+};
+
+inline fn DataGenerator::from(String filepath) -> Unique_ptr {
+  return std::make_unique<FileGenerator>(filepath);
 };
 } // namespace lingshin

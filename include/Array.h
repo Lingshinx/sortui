@@ -6,6 +6,7 @@
 
 namespace lingshin {
 
+// 对容器进行简单地包装，以便实时记录空间占用
 template <typename Type>
 class SpaceRecorder : public Type {
   static int &spaceUsed;

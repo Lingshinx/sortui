@@ -1,13 +1,13 @@
 #include "App.h"
 #include <Alias.h>
-#include <SetPage.h>
-#include <UI.h>
+#include <UI/SetPage.h>
+#include <UI/UI.h>
 namespace lingshin {
 use namespace ftxui;
-use namespace std::string_literals;
+use namespace std::string_literals; // 好用
 
 // ---静态定义区------
-String SetPage::Ctrl_w = "\x17";
+String SetPage::Ctrl_w = "\x17"; // 本来应该用<Ctrl+S>的，不过好像有些问题
 String SetPage::message;
 fn SetPage::input_option() {
   return InputOption{
@@ -24,17 +24,10 @@ fn SetPage::input_option() {
   };
 }
 fn SetPage::numberInput(const String &label, String &strRef) {
-  let input = Input(
-    &strRef, input_option()
-  ) | CatchEvent([](Event e) {
+  let input = Input(&strRef, input_option()) | CatchEvent([](Event e) {
     return e.is_character() && !isdigit(e.character()[0]);
   });
-  return Renderer(input, [=] {
-    return hbox({
-      text(label),
-      input->Render()
-    });
-  });
+  return Renderer(input, [=] { return hbox({text(label), input->Render()}); });
 }
 // -------------------------
 
@@ -112,9 +105,7 @@ SetPage::Array::Array() {
     return e.is_character() && !isdigit(e.character()[0]);
   };
   let input =
-    Input(&it, "0", input_option()) 
-      | CatchEvent(filter) 
-      | CatchEvent(onenter);
+    Input(&it, "0", input_option()) | CatchEvent(filter) | CatchEvent(onenter);
   let apply = [&] {
     App.setData(DataGenerator::from(data));
     Tui.tabIndex = UI::View;
@@ -123,8 +114,8 @@ SetPage::Array::Array() {
   let container = Container::Vertical({input, button});
   self = Renderer(container, [&, button, input] {
     return vbox({
-      paragraph(to_string(data)) 
-        | ftxui::size(WidthOrHeight::HEIGHT, Constraint::GREATER_THAN, 2),
+      paragraph(to_string(data)) |
+        ftxui::size(WidthOrHeight::HEIGHT, Constraint::GREATER_THAN, 2),
       hbox({
         text("请输入"),
         input->Render(),
@@ -147,8 +138,7 @@ SetPage::SetPage() {
       random.self,
       array.self,
     },
-    &which
-  );
+    &which);
   let container = Container::Vertical({
     tabToggle,
     tab,
@@ -157,17 +147,14 @@ SetPage::SetPage() {
   self = Renderer(container, [&, tab] {
     use enum WidthOrHeight;
     use enum Constraint;
-    return vbox(
-      vbox({
-        tabToggle->Render() | center,
-        separatorLight() | color(Color::Blue),
-        tab->Render() | borderEmpty,
-      }) | borderStyled(Color::Blue) 
-         | ftxui::size(WIDTH, EQUAL, 40),
-      text(message) 
-         | color(Color::Red) 
-         | center)
-         | center;
+    return vbox(vbox({
+                  tabToggle->Render() | center,
+                  separatorLight() | color(Color::Blue),
+                  tab->Render() | borderEmpty,
+                }) |
+                  borderStyled(Color::Blue) | ftxui::size(WIDTH, EQUAL, 40),
+             text(message) | color(Color::Red) | center) |
+           center;
   }) | CatchEvent([&](Event e) {
     if (e == Event::Character('q')) {
       Tui.tabIndex = UI::Home;

@@ -5,7 +5,7 @@ Int::Record Int::record;
 fn Int::compare(const Int &other) const -> std::strong_ordering {
   ++record.cmpTimes;
   record.nowCmping = Pair{index, other.index};
-  App.wait();
+  App.wait(); // 这就是我变速的密诀
   record.nowCmping = std::nullopt;
   return value() <=> other.value();
 }

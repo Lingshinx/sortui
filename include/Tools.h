@@ -4,8 +4,13 @@
 namespace lingshin::tool {
 
 namespace time = std::chrono;
-fn formatDuration(time::seconds)->std::string;
+class TimeUtil { // 形式主义地放一下
+  friend fn formatDuration(time::seconds)->std::string;
+  friend fn cast(const auto &time);
+};
 
+// 用于格式化时间 格式为${d}h${d}m${d}s的格式
+fn formatDuration(time::seconds)->std::string;
 template <typename T>
 inline fn cast(const auto &time) {
   return time::duration_cast<T>(time);
