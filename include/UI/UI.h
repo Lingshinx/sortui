@@ -5,6 +5,7 @@
 #include <Alias.h>
 #include <ftxui/component/screen_interactive.hpp>
 
+// UI 我就不注释了, 得专门去学ftxui 项目的文档才看得懂的
 namespace lingshin {
 extern class UI {
 public:

@@ -10,5 +10,7 @@ class Utils {
   friend void merge_sort(Array &data, int from, int to);
   friend void merge(Array &data, int from, int mid, int to);
   friend void quick_sort(Array &data, int from, int to);
+  friend void printSorting(bool &changed);
+  friend bool in(Pair pair, int index);
 };
 } // namespace lingshin

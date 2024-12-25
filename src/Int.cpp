@@ -11,7 +11,7 @@ fn Int::compare(const Int &other) const -> std::strong_ordering {
 }
 fn Int::compare(int other) const -> std::strong_ordering {
   ++record.cmpTimes;
-  record.nowCmping = {index, -1};
+  record.nowCmping = {index, -1}; // 写成-1 就不会打印在屏幕了
   App.wait();
   record.nowCmping = std::nullopt;
   return other <=> *it;

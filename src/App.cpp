@@ -4,7 +4,6 @@
 #include <Tools.h>
 #include <algorithm>
 #include <chrono>
-#include <exception>
 #include <mutex>
 #include <stdexcept>
 #include <thread>
@@ -15,13 +14,15 @@ using namespace std::chrono_literals;
 Controller Controller::app;
 Controller &App = Controller::getInstance(); // 全局静态单例变量，思路不错吧
 
-static bool in(Pair pair, int index) {
+// 判断是否是正在交换或者正常比较
+bool in(Pair pair, int index) {
   return index == pair.first || index == pair.second;
 }
 
 void Controller::initData() {
   var &source = *data_generator;
   var index = 0;
+  // 提前扩容
   data.resize(source.size);
   isSorted.resize(source.size);
   for (var &it : data)
@@ -49,6 +50,7 @@ void Controller::forEach(CallBack callback) {
 
 fn Controller::timePast() -> time::seconds {
   if (phase == Phase::Ready) return 0s;
+  // 如果已经结束了就用当时记录的时间来比较
   let now = phase == Phase::Done ? end_time : time::steady_clock::now();
   return tool::cast<time::seconds>(now - start_time);
 }
@@ -56,6 +58,7 @@ fn Controller::timePast() -> time::seconds {
 void Controller::wait() {
   use enum Phase;
   var lock = std::unique_lock<std::mutex>{statusLock};
+  // 不然会出现 0 作除数的情况
   if (option.speed < 0.01) phase = Paused;
   if (phase == Paused) cond_stop.wait(lock, [&] { return phase != Paused; });
   // 我觉得这个挺巧妙的，不知道事实上的倍速是不是同原理
@@ -70,6 +73,7 @@ void Controller::setData(DataGenerator::Unique_ptr source) {
   if (isIdle()) initData();
 }
 
+// 准备好就开始, 运行中就暂停, 暂停中就开始, 结束了就重开
 void Controller::toggle() {
   use enum Phase;
   switch (phase) {
@@ -93,10 +97,15 @@ void Controller::resume() {
   cond_stop.notify_all();
 }
 
+// 每次写一个新的排序要改写五处的代码
+// 这里是两处
+// 不过我也想不到更好的减少重复的代码
+// 毕竟要把 函数 - 枚举 - 字符串 联系起来
 use enum Option::Method;
 Option::Map Option::map{
   {Bubble, "冒泡排序"},
   {Cock, "鸡尾酒排序"},
+  {Compose, "复合排序"},
   {Insert, "插入排序"},
   {Select, "选择排序"},
   {Quick, "快速排序"},
@@ -127,6 +136,7 @@ fn Controller::start_sort() -> std::thread {
     case Bucket: data.bucket_sort(); break;
     case Radix: data.radix_sort(); break;
     case Cock: data.cock_sort(); break;
+    case Compose: data.compose_sort(); break;
     case Count: break;
     }
 

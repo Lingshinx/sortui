@@ -14,10 +14,10 @@ fn formatDuration(time::seconds duration) -> String {
   let seconds = cast<time::seconds>(duration);
 
   // cpp20的format，好用
-  if (hours.count() > 0) {
+  if (hours.count() > 0) { // 如果有小时
     return std::format(
       "{}h{:2}m{:2}s", hours.count(), minutes.count(), seconds.count());
-  } else if (minutes.count() > 0) {
+  } else if (minutes.count() > 0) { // 如果有分钟
     return std::format("{}m{:2}s", minutes.count(), seconds.count());
   } else {
     return std::format("{}s", seconds.count());

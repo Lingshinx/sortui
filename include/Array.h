@@ -31,6 +31,8 @@ public:
 };
 
 class Array : public std::vector<int> {
+  double sortedness();
+
 public:
   Int operator[](int index) { return Int{index, at(index)}; }
   Int get(int index) { return Int{index, at(index)}; }
@@ -59,5 +61,6 @@ public:
   void shell_sort();
   void bucket_sort();
   void radix_sort();
+  void compose_sort();
 };
 } // namespace lingshin

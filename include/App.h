@@ -13,6 +13,7 @@ namespace time = std::chrono;
 extern class Controller {
 public:
   Option option;
+  // StandBy 是待机状态, 指还没有输入数据的状态
   enum class Phase { StandBy, Ready, Running, Paused, Done };
   enum Status { Comparing, Swapping, NotActive, Sorted } status;
   std::atomic<Phase> phase;
@@ -23,15 +24,19 @@ public:
     this->option = option;
     return start_sort();
   };
+  // 对应ui 中的空格键操作
+  // 没开始就开始, 运行中就暂停, 暂停中就开始, 结束了就重开
   void toggle();
   void wait();
   void pause();
+  // 重新启动
   void resume();
   bool isDone() { return phase == Phase::Done; }
   bool isIdle() {
     use enum Phase;
     return phase == StandBy || phase == Ready || phase == Done;
   }
+  // 返回排序花费的时间
   fn timePast() -> time::seconds;
 
   // --- 数据控制相关------------------------------
@@ -40,6 +45,10 @@ public:
 
   Status get_state_of(int index);
   fn getDataView() { return views::all(data); }
+  // 这个不是给排序的时候用的, 只是方便UI 展示
+  // 总不可能数据有多大, 那个条就有多长吧
+  // 我是按 屏幕长度* value / 最大值来展示的
+  // 我觉得获取最大值也应该包含在排序用时当中
   int getMax() { return max; }
   fn getRecord() -> const Int::Record & { return Int::record; }
   use CallBack = std::function<void(int, int)>;
@@ -48,6 +57,10 @@ public:
   static fn getInstance() -> Controller & { return app; };
 
 private:
+  // 关于我为什么喜欢写类型别名和自动类型, 你看看这个类型有多长
+  // 如果你的变量名足够有描述性, 类型反而不很重要
+  // 说到底类型是服务于编译器, 而不是人的
+  // 不过我还是更喜欢静态类型
   use TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
   TimePoint start_time;
   TimePoint end_time;

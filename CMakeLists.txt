@@ -1,3 +1,5 @@
+# 这些是Ai 生成的, CMake 得花时间研究
+# 但我的所有代码都是纯键盘打的, 这是作为vimer 的尊严()
 cmake_minimum_required(VERSION 3.10)
 project(Sortui)
 

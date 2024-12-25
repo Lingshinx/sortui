@@ -23,6 +23,8 @@ void Array::cock_sort() {
   var left = 0;
   var right = size() - 1;
   var index = left;
+  // 因为不允许我写类以外的函数
+  // 那我只好写局部匿名函数了
   let judgeAndSwap = [&](int a, int b) {
     var _a = get(a), _b = get(b);
     if (_a > _b) {
@@ -36,7 +38,7 @@ void Array::cock_sort() {
       judgeAndSwap(index - 1, index);
     App.set_sorted(right);
     --right;
-    if (!swapped) break;
+    if (!swapped) break; // 提前结束
     while (--index > left)
       judgeAndSwap(index, index + 1);
     App.set_sorted(left);
@@ -132,6 +134,7 @@ struct node {
   int index;
   node(int x) : index(x){};
   operator int() { return index; }
+  // 左右子堆
   fn left() const { return 2 * index + 1; }
   fn right() const { return 2 * index + 2; }
 };
@@ -167,9 +170,12 @@ void Array::heap_sort() {
   int lastIndex = size() - 1;
   int last_unadjusted = (lastIndex) / 2;
   var &data = *this;
-  for (let index : iota(0, last_unadjusted) | reverse) // 建堆
+  // view 是惰性求值的
+  // 我十分青睐于函数式编程
+  // 最近在学 Haskell
+  for (let index : iota(0) | take(last_unadjusted) | reverse) // 建堆
     adjust(data, index, lastIndex);
-  for (let last : iota(0, lastIndex + 1) | reverse) { // 排序
+  for (let last : iota(0) | take(lastIndex + 1) | reverse) { // 排序
     get(0).swap(get(last));
     App.set_sorted(last);
     adjust(data, 0, last);
@@ -185,7 +191,7 @@ void shell_insert_sort(Array &data, int from, int step) {
       data[inner].swap(data[inner - step]);
 }
 
-int maxDigit(int num) {
+int maxDigit(int num) { // 返回最大的二进制非零位
   if (num <= 1) return num;
   return maxDigit(num >> 1) << 1;
 }
@@ -236,12 +242,15 @@ void Array::bucket_sort() {
 
 // --- 基数排序 -------------------
 struct Radix {
+  // 有些基数排序是用十进制进行的
+  // 但我认为这并不合理,
+  // cpu 进行位运算应该更快一些
   int digit = 0;
   int getDigit() { return digit; };
   use Container = SpaceRecorder<std::list<int>>;
   std::array<Container, 0x10> radixes;
   void next_digit() { digit += 4; }
-  int digit_of(int num) { return num >> digit & 0xf; }
+  int digit_of(int num) { return num >> digit & 0xf; } // 获取对应位的大小
   void push(int num) { radixes[digit_of(num)].push_back(num); }
   fn view() { return radixes | view::join; };
   fn collect() {
@@ -265,6 +274,37 @@ void Array::radix_sort() {
       radixes.push(it);
     range::copy(radixes.view(), data.begin());
     App.wait();
+  }
+}
+
+double Array::sortedness() {
+  var inverted = 0;
+  int length = size();
+  for (let index : view::iota(0, length - 1))
+    for (let after : view::iota(index + 1, length))
+      if (get(index) > get(after)) ++inverted;
+  int max_inversions = length * (length - 1) / 2;
+  // 有序性 = 1 - (逆序对数 / 最大逆序对数)
+  return 1.0 - static_cast<double>(inverted) / max_inversions;
+  return inverted;
+}
+
+void Array::compose_sort() {
+  let length = size();
+  if (length < 20) {
+    cock_sort(); // 数据量小时用什么都差不多
+  } else if (length < 1000) {
+    if (sortedness() < 0.4) // 很混乱时 用快排
+      quick_sort();
+    else if (sortedness() < 0.9)
+      shell_sort();
+    else // 如果比较有序, 用插入排序
+      insert_sort();
+  } else {
+    if (range::max(*this) > 10000)
+      merge_sort(); // 当数据量很大时使用归并排序
+    else
+      radix_sort(); // 数据的位数很小时, 基数排序
   }
 }
 
