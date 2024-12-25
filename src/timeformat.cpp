@@ -16,11 +16,11 @@ fn formatDuration(time::seconds duration) -> String {
   // cpp20的format，好用
   if (hours.count() > 0) {
     return std::format(
-      "{:2}h{:2}m{:2}s", hours.count(), minutes.count(), seconds.count());
+      "{}h{:2}m{:2}s", hours.count(), minutes.count(), seconds.count());
   } else if (minutes.count() > 0) {
-    return std::format("{:2}m{:2}s", minutes.count(), seconds.count());
+    return std::format("{}m{:2}s", minutes.count(), seconds.count());
   } else {
-    return std::format("{:2}s", seconds.count());
+    return std::format("{}s", seconds.count());
   }
 }
 } // namespace lingshin::tool

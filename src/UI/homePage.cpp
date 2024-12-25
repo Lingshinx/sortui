@@ -52,6 +52,7 @@ fn HomePage::HotButton(
 HomePage::HomePage() {
   use enum Controller::Phase;
   let onstart = [&] {
+    App.option.onfresh = [] { Tui.reflush(); };
     if (App.phase == StandBy) App.setData(DataGenerator::from(0, 99, 30));
     Tui.tabIndex = UI::View;
   };

@@ -82,7 +82,12 @@ inline fn DataGenerator::from(Function fun, int size) -> Unique_ptr {
 
 struct FileGenerator : public DataGenerator { // 文件数据生成器
   std::ifstream fin;
-  FileGenerator(String filepath) : fin(filepath){};
+  FileGenerator(String filepath) : fin(filepath) {
+    if (!fin.is_open())
+      throw std::runtime_error(
+        "\033[31merror\033[0m 没有这个文件: " + filepath);
+    fin >> size;
+  };
   int operator[](int index) override {
     var result = 0;
     fin >> result;

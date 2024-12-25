@@ -6,6 +6,7 @@
 #include <chrono>
 #include <exception>
 #include <mutex>
+#include <stdexcept>
 #include <thread>
 
 namespace lingshin {
@@ -60,7 +61,7 @@ void Controller::wait() {
   // 我觉得这个挺巧妙的，不知道事实上的倍速是不是同原理
   let duration = 100ms / option.speed;
   std::this_thread::sleep_for(duration);
-  Tui.reflush();
+  option.onfresh();
 }
 
 void Controller::setData(DataGenerator::Unique_ptr source) {
@@ -108,7 +109,7 @@ Option::Map Option::map{
 fn Controller::start_sort() -> std::thread {
   use enum Option::Method;
   use enum Phase;
-  if (phase != Ready) throw std::exception{};
+  if (phase != Ready) throw std::runtime_error{"没有初始化数据"};
 
   start_time = time::steady_clock::now();
   resetRecord();

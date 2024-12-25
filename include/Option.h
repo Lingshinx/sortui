@@ -1,5 +1,6 @@
 #pragma once
 #include <Alias.h>
+#include <functional>
 #include <map>
 
 namespace lingshin {
@@ -18,6 +19,8 @@ struct Option {
     Radix,
     Count, // 用于计数
   } method = Method::Quick;
+  use Task = std::function<void()>;
+  Task onfresh = [] {};
   use Map = std::map<Method, String>;
   static Map map;
 };

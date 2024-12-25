@@ -165,7 +165,8 @@ SortView::SortView() {
                      make_key("Quit", "q"),
                      make_key("切换方法", "Tab"),
                    }) |
-                   size(WidthOrHeight::HEIGHT, Constraint::GREATER_THAN, 2);
+                   border |
+                   size(WidthOrHeight::HEIGHT, Constraint::GREATER_THAN, 3);
 
   self = Renderer(controlPanel, [=] {
     return vbox({
@@ -173,7 +174,7 @@ SortView::SortView() {
         viewPanel(),
         InfoPanel(controlPanel),
       }),
-      hotKeyHint | border,
+      hotKeyHint,
     });
   }) | CatchEvent([&](Event e) {
     if (e == Event::Character(' ')) {
