@@ -96,6 +96,7 @@ void Controller::resume() {
 use enum Option::Method;
 Option::Map Option::map{
   {Bubble, "冒泡排序"},
+  {Cock, "鸡尾酒排序"},
   {Insert, "插入排序"},
   {Select, "选择排序"},
   {Quick, "快速排序"},
@@ -125,6 +126,7 @@ fn Controller::start_sort() -> std::thread {
     case Shell: data.shell_sort(); break;
     case Bucket: data.bucket_sort(); break;
     case Radix: data.radix_sort(); break;
+    case Cock: data.cock_sort(); break;
     case Count: break;
     }
 

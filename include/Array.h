@@ -50,6 +50,7 @@ public:
   }
 
   void bubble_sort();
+  void cock_sort();
   void insert_sort();
   void select_sort();
   void quick_sort();

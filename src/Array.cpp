@@ -17,6 +17,33 @@ void Array::bubble_sort() {
   }
 }
 
+// --- 鸡尾酒排序-------------
+void Array::cock_sort() {
+  var swapped = true;
+  var left = 0;
+  var right = size() - 1;
+  var index = left;
+  let judgeAndSwap = [&](int a, int b) {
+    var _a = get(a), _b = get(b);
+    if (_a > _b) {
+      swapped = true;
+      _a.swap(_b);
+    }
+  };
+  while (swapped) {
+    swapped = false;
+    while (++index < right)
+      judgeAndSwap(index - 1, index);
+    App.set_sorted(right);
+    --right;
+    if (!swapped) break;
+    while (--index > left)
+      judgeAndSwap(index, index + 1);
+    App.set_sorted(left);
+    ++left;
+  }
+};
+
 //----插入排序--------------------------
 void Array::insert_sort() {
   let length = size();

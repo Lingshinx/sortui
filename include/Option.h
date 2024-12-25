@@ -9,6 +9,7 @@ struct Option {
   float speed = 1;
   enum class Method {
     Bubble,
+    Cock,
     Insert,
     Select,
     Quick,
