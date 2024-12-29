@@ -272,8 +272,11 @@ void Array::radix_sort() {
     let collection = radixes.collect();
     for (let it : collection)
       radixes.push(it);
-    range::copy(radixes.view(), data.begin());
-    App.wait();
+    var index = 0;
+    for (let it : radixes.view()) {
+      data.at(index++) = it;
+      App.wait();
+    }
   }
 }
 

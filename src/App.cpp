@@ -15,6 +15,7 @@ Controller Controller::app;
 Controller &App = Controller::getInstance(); // 全局静态单例变量，思路不错吧
 
 // 判断是否是正在交换或者正常比较
+// 这也是无意义的友元函数
 bool in(Pair pair, int index) {
   return index == pair.first || index == pair.second;
 }
@@ -34,7 +35,7 @@ void Controller::initData() {
   phase = Phase::Ready;
 }
 
-Controller::Status Controller::get_state_of(int index) {
+fn Controller::get_state_of(int index) -> Status {
   use enum Status;
   let &pair = getRecord();
   if (isSorted[index]) return Sorted;
@@ -120,7 +121,6 @@ fn Controller::start_sort() -> std::thread {
   use enum Option::Method;
   use enum Phase;
   if (phase != Ready) throw std::runtime_error{"没有初始化数据"};
-
   start_time = time::steady_clock::now();
   resetRecord();
   return std::thread([&] {

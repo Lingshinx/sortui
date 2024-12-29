@@ -25,6 +25,7 @@ struct Option {
   // 每次比较交换时进行的操作
   // 因为要通知ui进行刷新所以留了这个选项
   // 可以减少耦合
+  // 这在一些地方也叫依赖注入吧
   Task onfresh = [] {};
   use Map = std::map<Method, String>;
   static Map map;

@@ -32,7 +32,7 @@ public:
     int _spaceUsed = 0;
   } record;
 
-  Int(int index, int &x) : index(index), it(&x){};
+  Int(int index, int &x) : index(index), it(&x) {};
 
   // 重载运算符, 让我更优雅地写各个排序算法
   // 这个时候就可以批评一下java了

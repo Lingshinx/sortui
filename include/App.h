@@ -15,7 +15,7 @@ public:
   Option option;
   // StandBy 是待机状态, 指还没有输入数据的状态
   enum class Phase { StandBy, Ready, Running, Paused, Done };
-  enum Status { Comparing, Swapping, NotActive, Sorted } status;
+  enum class Status { Comparing, Swapping, NotActive, Sorted } status;
   std::atomic<Phase> phase;
 
   // --- 时期控制相关-------------------
@@ -43,13 +43,13 @@ public:
   void setData(DataGenerator::Unique_ptr source);
   fn set_sorted(int index) { isSorted[index] = true; };
 
-  Status get_state_of(int index);
+  fn get_state_of(int index) -> Status;
   fn getDataView() { return views::all(data); }
   // 这个不是给排序的时候用的, 只是方便UI 展示
   // 总不可能数据有多大, 那个条就有多长吧
   // 我是按 屏幕长度* value / 最大值来展示的
   // 我觉得获取最大值也应该包含在排序用时当中
-  int getMax() { return max; }
+  fn getMax() { return max; }
   fn getRecord() -> const Int::Record & { return Int::record; }
   use CallBack = std::function<void(int, int)>;
   void forEach(CallBack);

@@ -28,6 +28,7 @@ void printSorting(bool &changed) {
 }
 int main(int argc, char *argv[]) {
   try {
+    // 处理命令行参数
     var result = ArguHandler(argc, argv);
     if (result.help) {
       extern const char *HelpMessage;
@@ -77,6 +78,7 @@ int main(int argc, char *argv[]) {
       // clang-format on
       return 0; // 正常退出
     }
+    // 处理运行时错误
   } catch (std::invalid_argument e) {
     // clang-format off
     std::cerr <<

@@ -24,6 +24,7 @@ public:
     record.usepace(new_size - Base::size());
     Base::resize(new_size);
   };
+  // 因为各个窗口的迭代器类型略有不同所以用了自动参数
   void insert(auto pos, int value) {
     record.usepace(1);
     Base::insert(pos, value);
@@ -34,10 +35,12 @@ class Array : public std::vector<int> {
   double sortedness();
 
 public:
+  // 给外部使用的运算符
   Int operator[](int index) { return Int{index, at(index)}; }
+  // 给内部方法使用的方法
   Int get(int index) { return Int{index, at(index)}; }
-  Array(int size) : std::vector<int>(size){};
-  Array() : std::vector<int>(){};
+  Array(int size) : std::vector<int>(size) {};
+  Array() : std::vector<int>() {};
 
   static fn new_vec(int size = 0) {
     return SpaceRecorder<std::vector<int>>(size);

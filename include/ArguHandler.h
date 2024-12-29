@@ -29,23 +29,7 @@ class ArguHandler {
     Argus(int argc, char *argv[]);
   };
 
-  Option::Method switchMethod(std::string_view method) {
-    use enum Option::Method;
-    // 只用前几个字母确定使用的方法
-    // 信息足够了, 这样写也比较方便
-    switch (tolower(method.front())) {
-    case 'i': return Insert;
-    case 'q': return Quick;
-    case 'h': return Heap;
-    case 'r': return Radix;
-    case 'm': return Merge;
-    case 's': return method[1] == 'h' ? Shell : Select;
-    // 这四个方法怎么前两个字母都一样 真巧
-    case 'b': return method[2] == 'c' ? Bucket : Bubble;
-    case 'c': return method[2] == 'c' ? Cock : Compose;
-    }
-    throw std::invalid_argument("不认识的排序方法");
-  }
+  fn switchMethod(std::string_view method) -> Option::Method;
 
 public:
   File datasource = std::nullopt;

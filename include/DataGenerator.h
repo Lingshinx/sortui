@@ -11,7 +11,7 @@ namespace lingshin {
 // 统一用同一个接口
 class DataGenerator {
 protected:
-  DataGenerator(int size = 20) : size(size){};
+  DataGenerator(int size = 20) : size(size) {};
 
   use Pair = std::pair<int, int>;
 
@@ -25,7 +25,7 @@ public:
   use Container = std::vector<int>;
   use Unique_ptr = std::unique_ptr<DataGenerator>;
   virtual int operator[](int) = 0;
-  static Unique_ptr Default;
+  // 静态工厂函数
   static fn from(Range range, int size = 20) -> Unique_ptr;
   static fn from(int min, int max, int size = 20) -> Unique_ptr {
     return from(Range{min, max}, size);
@@ -42,7 +42,7 @@ class RandomGenerator : public DataGenerator { // 随机数据生成器
 
 public:
   RandomGenerator(Range range)
-    : dis(range.first, range.second), random(std::random_device{}()){};
+    : dis(range.first, range.second), random(std::random_device{}()) {};
   int operator[](int index) override { return dis(random); };
 };
 
@@ -55,9 +55,9 @@ inline fn DataGenerator::from(Range range, int size) -> Unique_ptr {
 struct ArrayGenerator : public DataGenerator { // 数据数据生成器
   const Container data;
   ArrayGenerator(Container &&source)
-    : DataGenerator(source.size()), data(source){};
+    : DataGenerator(source.size()), data(source) {};
   ArrayGenerator(Container &source)
-    : DataGenerator(source.size()), data(source){};
+    : DataGenerator(source.size()), data(source) {};
   int operator[](int index) override { return data.at(index); }
 };
 
@@ -70,7 +70,7 @@ inline fn DataGenerator::from(Container &source) -> Unique_ptr {
 
 struct FunctionGenerator : public DataGenerator { // 函数数据生成器
   const Function fun;
-  FunctionGenerator(Function fun) : fun(fun){};
+  FunctionGenerator(Function fun) : fun(fun) {};
   int operator[](int index) override { return fun(index); }
 };
 
